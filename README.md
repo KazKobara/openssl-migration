@@ -57,6 +57,9 @@ libssl, libcrypto ver. 1.1 以降を link することを想定して書いた�
 ~~~
 
 ---
+[homeに戻る](https://kazkobara.github.io/)
+
+---
 
 ## 免責事項
 
