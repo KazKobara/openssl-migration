@@ -2,24 +2,31 @@
 
 ## 必要な知識
 
-* OpenSSL (主要バージョンの違いについては[こちら](https://ja.wikipedia.org/wiki/OpenSSL))
+* [脆弱性のある OpenSSL の version 情報](https://www.openssl.org/news/vulnerabilities.html)
+  * 2020年12月8日時点で 1.1.1-1.1.1h, 1.0.2-1.0.2w は [CVE-2020-1971](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-1971) の脆弱性があり、それぞれ1.1.1i以降、1.0.2x以降に移行させる必要があります。
+* [OpenSSL の主要な version](https://ja.wikipedia.org/wiki/OpenSSL)
+  * サポート期限切れの version は、脆弱性が見つかっても原則修正が行われないため、最新版/脆弱性修正版への移行が必要です。
 * 構造体
 * const
 
-## 「レガシーコード --link--> 新ライブラリ (lib{ssl,crypto} ver. 1.1*以降)」を実現したい場合
+## 【推奨】「レガシーコード --link--> 新ライブラリ (lib{ssl,crypto} ver. 1.1*以降)」を実現したい場合
 
-以前 Ver. 1.0.2 以前の libssl libcrypto を link していたレガシーコードを、Ver. 1.1 以降向けのコードにアップデートさせたい場合について、以下の状況毎に説明。
+以前 Ver. 1.0.2 以前の libssl libcrypto を link していたレガシーコードを、Ver. 1.1 以降向けのコードにアップデートさせたい場合について、状況毎の対応策を説明。
 
 コンパイルエラー毎の対応策:
 
 * [鍵構造体要素の参照に対して `"incomplete type"` エラーが出る場合](./docs/set-and-get.md)
 * [`"storage size of ‘xxx’ isn’t known"` エラーが出る場合](./docs/direct-to-pointer.md)
 * [`"error: invalid application of ‘sizeof’ to incomplete type ‘BIGNUM’ {aka ‘struct bignum_s’}"` が出る場合](./docs/bignum.md)
-* [`"DEPRECATEDIN_1_1_0"` が出る場合](./docs/deprecated.md)
+* [`"DEPRECATEDIN_"` が出る場合](./docs/deprecated.md)
 
 リンクエラーへの対応策:
 
 * [`"undefined reference to"` エラーが出る場合](./docs/deprecated.md)
+
+---
+
+以下【非推奨】、やむを得ない場合の応急措置となります。
 
 ## 「レガシーコード --link--> 旧ライブラリ (lib{ssl,crypto} ver. 1.0*以降)」を実現したい場合
 
