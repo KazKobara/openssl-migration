@@ -8,10 +8,10 @@
 #include <string.h>
 #include <openssl/engine.h>
 
+#if OPENSSL_VERSION_NUMBER > 0x10100000L
 int RSA_key_set_and_get(int keyLength, unsigned long exponent){
     int ret = 1;
     RSA *rsa_p = NULL, *rsa1_p = NULL;
-#if OPENSSL_VERSION_NUMBER > 0x10100000L
     /* BIGNUM to be applied by BN_free() unless they are set to key */
     BIGNUM *tmp_bn1_p = NULL, *tmp_bn2_p = NULL, *bn_expo_p = NULL;
     /* const BIGNUM should not be applied by BN_free() since they are freed by {RSA,DSA,DH}_free() etc. */
@@ -66,11 +66,6 @@ int RSA_key_set_and_get(int keyLength, unsigned long exponent){
     RSA_get0_key(rsa_p, &tmp_cbn1_p, NULL, NULL);
     printf("After set the new key: &tmp_cbn1_p =%p, tmp_cbn1_p =%p\n", &tmp_cbn1_p, tmp_cbn1_p);
 
-#else
-    fprintf(stderr, "Error: use libssl > 1.1!! (OPENSSL_VERSION_NUMBER=%lx)\n", OPENSSL_VERSION_NUMBER);
-    ret = 1; goto Done;
-#endif
-
     ret = 0;
  Done:
     RSA_free(rsa_p);
@@ -85,12 +80,18 @@ int RSA_key_set_and_get(int keyLength, unsigned long exponent){
     //BN_free(tmp_cbn3_p); // Already freed by set. Freeing 'const BIGNUM *' is warned by compiler and aborted with the message 'double free or corruption (out)'
     return ret;
 }
+#endif
 
 int main(int argc, char *argv[]){
     int ret = 0;
+#if OPENSSL_VERSION_NUMBER > 0x10100000L
     int keyLength = 2048; 
     unsigned long exponent = 65537;
     if (!(ret=RSA_key_set_and_get(keyLength, exponent))) goto Done;
+#else
+    fprintf(stderr, "Error: use libssl > 1.1!! (OPENSSL_VERSION_NUMBER=%lx)\n", OPENSSL_VERSION_NUMBER);
+    ret = 1;
+#endif
 
  Done:
     return ret;

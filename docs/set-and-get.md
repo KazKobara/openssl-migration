@@ -6,6 +6,7 @@
 error: dereferencing pointer to incomplete type ‘RSA’ {aka ‘struct rsa_st’}
 error: dereferencing pointer to incomplete type ‘DSA’ {aka ‘struct dsa_st’}
 error: dereferencing pointer to incomplete type ‘DH’ {aka ‘struct dh_st’}
+error: dereferencing pointer to incomplete type ‘BN_MONT_CTX’ {aka ‘struct bn_mont_ctx_st’}
 ~~~
 
 ## 対処方法
@@ -60,16 +61,18 @@ Ver. 1.1 からは、鍵要素の取り出しは `*_get*()` 関数 (`RSA_get0_ke
     key->n = yyy;  /* ここで key は RSA, DSA, DHなどの鍵構造体 */
 #else
     bn_to_set_p = yyy;
-    RSA_set0_key(key, bn_to_set_p, NULL, NULL);
+    if (!RSA_set0_key(key, bn_to_set_p, NULL, NULL)){
+        /* エラー処理 */
+    }
     /* _set*() で渡した BIGNUM ポインタ変数は ({RSA,DSA,DH}_free() などで解放されるため)、使用後のポインタに NULL を入れておくこと(もし、入れないのであれば以降で BN_free()しないこと)。*/
-    bn_to_set_p = NULL
+    bn_to_set_p = NULL;
 #endif
 
     /* メモリ解放 */
     /* memory leak を防止するため、宣言された(constでない) BIGNUM ポインタ変数はいずれも BN_free() されいる(かNULLとなっている)こと。 */
-    BN_free(bn_p)
+    BN_free(bn_p);
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
-    BN_free(bn_to_set_p)  /* 使用後 NULL を入れておく(or BN_free()しない)こと。 */
+    BN_free(bn_to_set_p);  /* 使用後 NULL を入れておく(or BN_free()しない)こと。 */
 #endif
 ~~~
 
