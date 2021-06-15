@@ -8,8 +8,8 @@
   * 2020年12月8日時点で 1.1.1-1.1.1h, 1.0.2-1.0.2w には [CVE-2020-1971](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-1971) の脆弱性があります。
 * [OpenSSL の主要な version](https://ja.wikipedia.org/wiki/OpenSSL)
   * サポート期限切れの version は、脆弱性が見つかっても原則修正が行われないため、最新版/脆弱性修正版への移行が必要です。
-* 構造体
-* const
+* c言語
+  * 特に、構造体、constなど。
 
 ## 【推奨】「レガシーコード --link--> 新ライブラリ (lib{ssl,crypto} ver. 1.1*以降)」を実現したい場合
 
@@ -25,6 +25,10 @@
 リンクエラーへの対応策:
 
 * [`"undefined reference to"` エラーが出る場合](./docs/deprecated.md)
+
+実行時エラーへの対応策:
+
+* [BN_*() 関数の実行に失敗する場合](./docs/bn_rand.md)
 
 ---
 
