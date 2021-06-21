@@ -7,8 +7,7 @@
 ```c
 rc=BN_priv_rand_range(bn_p, bn_range_p);
 if (1!=rc){
-    (void)fprintf(stderr, "BN_priv_rand_range failed with %d: %s.\n",
-        rc, ERR_error_string(ERR_get_error(), NULL));
+    ERR_print_errors_fp(stderr);
     goto Done;  /* メモリ解放などの後処理を行って return */
 }
 ```
@@ -41,10 +40,10 @@ BIGNUM * const bn_p = BN_new();
 
 ```c
 int32_t ret = 1;
+unsigned long err;
 if (NULL==bn_p){
     /* エラー処理 */
-    (void)fprintf(stderr, "BN_new(): %s.\n",
-        ERR_error_string(ERR_get_error(), NULL));
+    ERR_print_errors_fp(stderr);
     goto Done;  /* メモリ解放などの後処理を行って return */
 }
 
@@ -56,6 +55,8 @@ Done:
     return ret;
 ```
 
+ちなみに、これらのエラー時に perror() などでエラーメッセージを表示させても（原因がシステムコールや標準ライブラリに起因していない場合には） ": Success" と表示される。
+
 ## 症状1の補足
 
 以下の表のように、```bn_p=NULL``` の場合でも、例えば、BN_hex2bn()、BN_dec2bn() などの関数では、BIGNUM を生成し、そのアドレスを bn_p に格納してくれる。
@@ -64,16 +65,21 @@ Done:
 
 Table. 1 BIGNUMポインタ型変数(bn_p)の初期化とBN_*()関数の組み合わせに対するコンパイル/実行結果の関係
 
-| Initialization of `bn_p` | None (not recommended) | `NULL` (not recommended) | `BN_new()` `BN_secure_new()` (recommended) |
+| Initialization of `bn_p` | None (not recommended) | `NULL` | `BN_new()` `BN_secure_new()` |
 | :--- | :--- | :--- | :--- |
-| BN_hex2bn(&bn_p,) BN_dec2bn(&bn_p,) etc. | Segmentation fault \*1 | OK | OK |
-| BN_priv_rand_range(bn_p), BN_rand_range(bn_p) etc. | OK \*1 | Runtime error \*2 | OK  |
-| BN_priv_rand(bn_p), BN_rand(bn_p) etc. | OK \*1 | Segmentation fault \*2 | OK  |
-| BN_zero(bn_p), BN_one(bn_p), BN_add(bn_p,), BN_sub(bn_p,), BN_lshift(bn_p,) etc. | Segmentation fault \*1 | Segmentation fault \*2 | OK  |
+| BN_priv_rand_range(bn_p), BN_rand_range(bn_p) etc. | OK \*1 | Runtime error \*2 | OK |
+| BN_priv_rand(bn_p), BN_rand(bn_p) etc. | OK \*1 | Segmentation fault \*2 | OK |
+| BN_zero(bn_p), BN_one(bn_p), BN_set_word(bn_p,), BN_add(bn_p,), BN_sub(bn_p,), BN_lshift(bn_p,) etc. | Segmentation fault  \*1 | Segmentation fault \*2 | OK |
+| BN_hex2bn(&bn_p,), BN_dec2bn(&bn_p,) etc. | Segmentation fault  \*5,\*2 | OK | OK |
+| RSA_get0_key(, &bn_p, ), DH_get0_pqg(, &bn_p) etc. | OK \*6 | OK \*4 (recommended) | OK \*3 |
 
 - OK: No runtime error.
 - \*1 Compiler warns.
 - \*2 Compiler does not warn.
+- \*3 Redundant since memory allocated by BN_new()/BN_secure_new() is not used.
+- \*4 Note this does not mean &bn_p = NULL, but bn_p = NULL.
+- \*5 Non-null pointers are tried to be used and cause segfault.
+- \*6 Non-null pointers are not freed but will cause problems in case of error with \*_free() and so on.
 
 上記の実行環境
 

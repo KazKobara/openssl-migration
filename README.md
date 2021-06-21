@@ -15,20 +15,20 @@
 
 以前 Ver. 1.0.2 以前の libssl libcrypto を link していたレガシーコードを、Ver. 1.1 以降向けのコードにアップデートさせたい場合について、状況毎の対応策を説明。
 
-### コンパイルエラー毎の対応策:
+### コンパイルエラー毎の対応策
 
 * [鍵構造体要素の参照に対して `"incomplete type"` エラーが出る場合](./docs/set-and-get.md)
 * [`"storage size of ‘xxx’ isn’t known"` エラーが出る場合](./docs/direct-to-pointer.md)
 * [`"error: invalid application of ‘sizeof’ to incomplete type ‘BIGNUM’ {aka ‘struct bignum_s’}"` が出る場合](./docs/bignum.md)
 * [`"DEPRECATEDIN_"` が出る場合](./docs/deprecated.md)
 
-### リンクエラーへの対応策:
+### リンクエラーへの対応策
 
 * [`"undefined reference to"` エラーが出る場合](./docs/deprecated.md)
 
-### 実行時エラーへの対応策:
+### 実行時エラーへの対応策
 
-* [BN_*() 関数の実行に失敗する場合](./docs/bn_rand.md)
+* [BN_*() 関数の実行に失敗する場合](./docs/bn_runtime_error.md)
 
 ### ついでに[移行しておくとよい関数群](./docs/func.md)
 
