@@ -13,9 +13,9 @@ error: dereferencing pointer to incomplete type ‘BN_MONT_CTX’ {aka ‘struct
 
 Ver. 1.1 からは、鍵要素の取り出しは `*_get*()` 関数 (`RSA_get0_key()` など) 書込み/書換えは `*_set*()` 関数(`RSA_set0_key()` など)を使う。
 
-以下は説明のための疑似コード。実験用のコードは[こちら](../src/set_and_get.c)。
+以下は説明のための疑似コード。実験用のコード: [RSA_*()用](../src/set_and_get_rsa.c), [DH_*()用](../src/set_and_get_dh.c)。
 
-## `xxx = key->n` から `*_get*(key, )` への変更例：
+## `xxx = key->n` から `*_get*(key, )` への変更例
 
 ~~~c
     /* 宣言 */
@@ -39,13 +39,12 @@ Ver. 1.1 からは、鍵要素の取り出しは `*_get*()` 関数 (`RSA_get0_ke
     // BN_free(cbn_to_get_p)
 ~~~
 
-### 補足
+### `*_get*()`の補足
 
-* const BIGNUM を `BN_free()` するとコンパイル時に"‘BN_free’ discards ‘const’ qualifier from pointer target type"などの警告が出る。
-  * 警告を無視して `*_get*()` で受けた const BIGNUM ポインタ定数を BN_free() すると、実行時に double free エラーとなる。
+- const BIGNUM を `BN_free()` するとコンパイル時に"‘BN_free’ discards ‘const’ qualifier from pointer target type"などの警告が出る。
+  - 警告を無視して `*_get*()` で受けた const BIGNUM ポインタ定数を BN_free() すると、実行時に double free エラーとなる。
 
-
-## `key->n = yyy` から `*_set*(key, )` への変更例：
+## `key->n = yyy` から `*_set*(key, )` への変更例
 
 ~~~c
     /* 宣言 */
@@ -76,10 +75,10 @@ Ver. 1.1 からは、鍵要素の取り出しは `*_get*()` 関数 (`RSA_get0_ke
 #endif
 ~~~
 
-### 補足
+### `*_set*()`の補足
 
-* `*_put*()` すると既に保持されている鍵要素用のメモリは free される。
+- `*_set*()` すると既に保持されている鍵要素用のメモリは free される。
 
 ---
 
-* [リストに戻る](../README.md)
+- [リストに戻る](../README.md)
