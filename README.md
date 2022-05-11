@@ -3,7 +3,6 @@
 ## 必要な知識
 
 * [脆弱性のある OpenSSL の version 情報はこちら](https://www.openssl.org/news/vulnerabilities.html)
-  * 2022年3月15日時点で 1.1.1m 以前には上記リンク先で解説されている脆弱性があるため、1.1.1n以降に移行させる必要があります。
 * [OpenSSL の主要な version](https://ja.wikipedia.org/wiki/OpenSSL)
   * サポート期限切れの version (1.1.0 以下など)は、脆弱性が見つかっても原則修正が行われないため、最新版/脆弱性修正版への移行が必要です。
 * c言語
