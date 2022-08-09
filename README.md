@@ -1,12 +1,20 @@
 # OpenSSL (libssl libcrypto) の version を 1.1未満(1.0.2以前) から 1.1 以降に変更する方法や注意点など
 
-## 必要な知識
+## 関連情報
 
 * [脆弱性のある OpenSSL の version 情報はこちら](https://www.openssl.org/news/vulnerabilities.html)
 * [OpenSSL の主要な version](https://ja.wikipedia.org/wiki/OpenSSL)
   * サポート期限切れの version (1.1.0 以下など)は、脆弱性が見つかっても原則修正が行われないため、最新版/脆弱性修正版への移行が必要です。
+  * Python 3.10 以降から OpenSSL 1.1.1 以降が求められます [[PEP 644](https://peps.python.org/pep-0644/)]。
+
+## 必要な知識
+
 * c言語
   * 特に、構造体、constなど。
+
+## 【推奨】 Ver.3未満用コードの修正 --link--> Ver.3以降のライブラリ
+
+本家の [migration_guide](https://www.openssl.org/docs/man3.0/man7/migration_guide.html) をご参照下さい。
 
 ## 【推奨】 Ver1.1未満用コードの修正 --link--> Ver.1.1以降のライブラリ
 
